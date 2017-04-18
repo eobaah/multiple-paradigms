@@ -61,9 +61,9 @@ Being fluent in different paradigms will help you to think about and understand 
 - [ ] All tests are passing.
 - [ ] Can parse Markdown syntax ([reference](https://help.github.com/articles/basic-writing-and-formatting-syntax/)) and render correct HTML for...
   - [ ] Paragraphs
-  - [ ] Headings
-  - [ ] Italicized text
-  - [ ] Bold text
+  - [X] Headings
+  - [X] Italicized text
+  - [X] Bold text
   - [ ] Links
   - [ ] Images
   - [ ] Unordered lists
