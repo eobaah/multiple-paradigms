@@ -2,6 +2,10 @@
 
 const parseArgs = require('minimist')
 const args = parseArgs(process.argv.slice(2))
+const functional = require('../lib-functional/index')
+const fileParser = require('../parser/index')
+const parseFunctional = require('../lib-functional/index')
+const fs = require('fs')
 
 const fileName = args._[0]
 
@@ -11,13 +15,13 @@ if (!fileName) {
 
 switch (args.paradigm) {
   case 'oo':
-    // load and use object-oriented parser
+    require('../lib-object-oriented/index')
     break
   case 'functional':
-    // load and use functional parser
+    console.log(parseFunctional(fileParser(fileName)))
     break
   case 'imperative':
-    // load and use imperative parser
+    require('../lib-imperative/index')
     break
   default:
     console.error("Missing --paradigm flag.")
