@@ -18,7 +18,7 @@ switch (args.paradigm) {
     require('../lib-object-oriented/index')
     break
   case 'functional':
-    console.log(parseFunctional(fileParser(fileName)))
+    console.log(functional(fs.readFileSync(fileName, 'utf-8')))
     break
   case 'imperative':
     require('../lib-imperative/index')
