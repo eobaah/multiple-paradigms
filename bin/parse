@@ -5,6 +5,7 @@ const args = parseArgs(process.argv.slice(2))
 const functional = require('../lib-functional/index')
 const fileParser = require('../parser/index')
 const parseFunctional = require('../lib-functional/index')
+const mdHtmlConverter = require('../lib-object-oriented/index')
 const fs = require('fs')
 
 const fileName = args._[0]
@@ -15,13 +16,13 @@ if (!fileName) {
 
 switch (args.paradigm) {
   case 'oo':
-    require('../lib-object-oriented/index')
+    var ooConverter = new mdHtmlConverter(fs.readFileSync(fileName, 'utf-8'))
+    console.log(ooConverter.tokenIdentifier())
     break
   case 'functional':
     console.log(parseFunctional(fileParser(fileName)))
     break
   case 'imperative':
-    require('../lib-imperative/index')
     break
   default:
     console.error("Missing --paradigm flag.")
