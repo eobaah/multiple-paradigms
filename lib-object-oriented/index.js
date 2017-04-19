@@ -34,7 +34,12 @@ class mdHtmlConverter {
     let result = this.data.split('').map(function(token){
       return toker.assign(token)
     })
-    console.log(result);
+
+    // console.log(result);
+    return result
+  }
+  tokenBuilder(){
+
   }
 }
 
