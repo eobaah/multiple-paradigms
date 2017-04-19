@@ -20,7 +20,7 @@ switch (args.paradigm) {
     console.log(ooConverter.tokenIdentifier())
     break
   case 'functional':
-    console.log(parseFunctional(fileParser(fileName)))
+    console.log(parseFunctional(fs.readFileSync(fileName)))
     break
   case 'imperative':
     break

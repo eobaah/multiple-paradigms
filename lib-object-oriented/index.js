@@ -1,6 +1,7 @@
 class mdHtmlConverter {
   constructor(data){
     this.data = data
+    this.element = ''
   }
   assign(input){
     var CHARACTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -30,16 +31,42 @@ class mdHtmlConverter {
     }
   }
   tokenIdentifier(){
-    var toker = this
-    let result = this.data.split('').map(function(token){
-      return toker.assign(token)
+    var tokener = this
+    var result = this.data.split('').map(function(token){
+      return tokener.assign(token)
     })
-
-    // console.log(result);
-    return result
+    return tokener.tokenBuilder(result)
   }
-  tokenBuilder(){
+  tokenBuilder(input){
+    var tokener = this, index = 0, message = [], tagName = [], counter = 0
 
+    while(!(input[index] instanceof Character)){
+
+      tagName.push(input[index].data)
+      index++
+    }
+    tagName.pop()
+    index--
+    while(input[index].data !== '\n'){
+
+      if(input[index] instanceof Character || input[index] instanceof Number || input[index] instanceof Space){
+        message.push(input[index].data)
+      }
+
+      index++
+    }
+    message.shift()
+
+    console.log(tagName.join(''));
+    switch(tagName.join('')){
+      case '#': tokener.element = new Header1(message.join('')); break;
+      case '##': tokener.element = new Header2(message.join('')); break;
+      case '###': tokener.element = new Header3(message.join('')); break;
+      case '####': tokener.element = new Header4(message.join('')); break;
+      case '#####': tokener.element = new Header5(message.join('')); break;
+      case '######': tokener.element = new Header6(message.join('')); break;
+    }
+    return tokener.element
   }
 }
 
@@ -48,6 +75,7 @@ class Header2 {constructor(data){this.data = data}}
 class Header3 {constructor(data){this.data = data}}
 class Header4 {constructor(data){this.data = data}}
 class Header5 {constructor(data){this.data = data}}
+class Header6 {constructor(data){this.data = data}}
 class Hash {constructor(data){this.data = data}}
 class Underscore {constructor(data){this.data = data}}
 class Period {constructor(data){this.data = data}}
