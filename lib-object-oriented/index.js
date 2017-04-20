@@ -31,20 +31,20 @@ class mdHtmlConverter {
     }
   }
   tokenIdentifier(){
-    let tokener = this, index = 0
-    tokener.data = tokener.data.split('').map((token) => {
-      return tokener.assign(token)
+    let index = 0
+    this.data = this.data.split('').map((token) => {
+      return this.assign(token)
     })
-    return tokener.tokenBuilder(tokener.data)
+    return this.tokenBuilder(this.data)
   }
   tokenBuilder(input, position){
-    let tokener = this, index = position || 0, message = [], tagSymbol = [], counter = 0
+    let index = position || 0, message = [], tagSymbol = [], counter = 0
     while(!(input[index] instanceof Character)){
       if(input[index] !== undefined){
         tagSymbol.push(input[index].data)
         index++
       }else{
-        return tokener.elements
+        return this.elements
       }
     }
     if(tagSymbol.includes('#')){
@@ -60,36 +60,34 @@ class mdHtmlConverter {
       index++
     }
     message.shift()
-    tokener.populateElement(tagSymbol.join(''),message.join(''))
-    return tokener.resetIndex(index)
+    this.populateElement(tagSymbol.join(''),message.join(''))
+    return this.resetIndex(index)
   }
   indexIncrementor(num){
-    let tokener = this
-    if(tokener.data[num] instanceof NewLine || tokener.data[num] instanceof Space){
-      console.log('where am i???? ', tokener.data[num + 2], tokener.data.length);
-      return tokener.indexIncrementor(num + 1)
+    if(this.data[num] instanceof NewLine || this.data[num] instanceof Space){
+      // console.log('where am i???? ', this.data[num + 2], this.data.length);
+      return this.indexIncrementor(num + 1)
     }
     return num
   }
   resetIndex(index){
-    let tokener = this, newIndex
-    if(index === tokener.data.length){
-      return tokener.elements
+    let newIndex
+    if(index === this.data.length){
+      return this.elements
     }
-    newIndex = tokener.indexIncrementor(index)
-    return tokener.tokenBuilder(tokener.data, newIndex)
+    newIndex = this.indexIncrementor(index)
+    return this.tokenBuilder(this.data, newIndex)
   }
   populateElement(input, message){
-    let tokener = this
     switch(input){
-      case '#': tokener.elements.push(new Header1(message)); break;
-      case '##': tokener.elements.push(new Header2(message)); break;
-      case '###': tokener.elements.push(new Header3(message)); break;
-      case '####': tokener.elements.push(new Header4(message)); break;
-      case '#####': tokener.elements.push(new Header5(message)); break;
-      case '######': tokener.elements.push(new Header6(message)); break;
-      case '**'||'__': tokener.elements.push(new Bold(message)); break;
-      case '*'||'_': tokener.elements.push(new Italics(message)); break;
+      case '#': this.elements.push(new Header1(message)); break;
+      case '##': this.elements.push(new Header2(message)); break;
+      case '###': this.elements.push(new Header3(message)); break;
+      case '####': this.elements.push(new Header4(message)); break;
+      case '#####': this.elements.push(new Header5(message)); break;
+      case '######': this.elements.push(new Header6(message)); break;
+      case '**'||'__': this.elements.push(new Bold(message)); break;
+      case '*'||'_': this.elements.push(new Italics(message)); break;
     }
   }
 }
