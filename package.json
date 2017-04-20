@@ -8,10 +8,10 @@
     "mocha": "2.0.1"
   },
   "scripts": {
-    "test": "mocha ./spec/*.js",
+    "test": "mocha --compilers js:babel-register ./spec/*.js",
     "parse:oo": "babel-node bin/parse --paradigm oo",
-    "parse:functional": "bin/parse --paradigm functional",
-    "parse:imperative": "bin/parse --paradigm imperative"
+    "parse:functional": "babel-node bin/parse --paradigm functional",
+    "parse:imperative": "babel-node bin/parse --paradigm imperative"
   },
   "dependencies": {
     "babel-cli": "^6.24.1",

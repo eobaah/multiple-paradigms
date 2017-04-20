@@ -1,11 +1,11 @@
 class mdHtmlConverter {
   constructor(data){
     this.data = data
-    this.element = ''
+    this.elements = []
   }
   assign(input){
-    var CHARACTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    var NUMBERS = '1234567890'
+    let CHARACTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    let NUMBERS = '1234567890'
     switch(input){
       case '#': return new Hash(input); break;
       case '_': return new Underscore(input); break;
@@ -31,42 +31,66 @@ class mdHtmlConverter {
     }
   }
   tokenIdentifier(){
-    var tokener = this
-    var result = this.data.split('').map(function(token){
+    let tokener = this, index = 0
+    tokener.data = tokener.data.split('').map((token) => {
       return tokener.assign(token)
     })
-    return tokener.tokenBuilder(result)
+    return tokener.tokenBuilder(tokener.data)
   }
-  tokenBuilder(input){
-    var tokener = this, index = 0, message = [], tagName = [], counter = 0
-
+  tokenBuilder(input, position){
+    let tokener = this, index = position || 0, message = [], tagSymbol = [], counter = 0
     while(!(input[index] instanceof Character)){
-
-      tagName.push(input[index].data)
-      index++
-    }
-    tagName.pop()
-    index--
-    while(input[index].data !== '\n'){
-
-      if(input[index] instanceof Character || input[index] instanceof Number || input[index] instanceof Space){
-        message.push(input[index].data)
+      if(input[index] !== undefined){
+        tagSymbol.push(input[index].data)
+        index++
+      }else{
+        return tokener.elements
       }
+    }
+    if(tagSymbol.includes('#')){
+      tagSymbol.pop()
+    }
+    index--
+    if(tagSymbol.join('').includes('__')||tagSymbol.join('').includes('**')){
+      console.log('im a bold');
+    }
 
+    while(input[index].data !== '\n'){
+      message.push(input[index].data)
       index++
     }
     message.shift()
-
-    console.log(tagName.join(''));
-    switch(tagName.join('')){
-      case '#': tokener.element = new Header1(message.join('')); break;
-      case '##': tokener.element = new Header2(message.join('')); break;
-      case '###': tokener.element = new Header3(message.join('')); break;
-      case '####': tokener.element = new Header4(message.join('')); break;
-      case '#####': tokener.element = new Header5(message.join('')); break;
-      case '######': tokener.element = new Header6(message.join('')); break;
+    tokener.populateElement(tagSymbol.join(''),message.join(''))
+    return tokener.resetIndex(index)
+  }
+  indexIncrementor(num){
+    let tokener = this
+    if(tokener.data[num] instanceof NewLine || tokener.data[num] instanceof Space){
+      console.log('where am i???? ', tokener.data[num + 2], tokener.data.length);
+      return tokener.indexIncrementor(num + 1)
     }
-    return tokener.element
+    return num
+  }
+  resetIndex(index){
+    let tokener = this, newIndex
+    if(index === tokener.data.length){
+      return tokener.elements
+    }
+    newIndex = tokener.indexIncrementor(index)
+    return tokener.tokenBuilder(tokener.data, newIndex)
+  }
+  populateElement(input, message){
+    let tokener = this
+    switch(input){
+      case '#': tokener.elements.push(new Header1(message)); break;
+      case '##': tokener.elements.push(new Header2(message)); break;
+      case '###': tokener.elements.push(new Header3(message)); break;
+      case '####': tokener.elements.push(new Header4(message)); break;
+      case '#####': tokener.elements.push(new Header5(message)); break;
+      case '######': tokener.elements.push(new Header6(message)); break;
+      case '**'||'__': tokener.elements.push(new Bold(message)); break;
+      case '*'||'_': tokener.elements.push(new Italics(message)); break;
+    }
   }
 }
 
@@ -76,6 +100,8 @@ class Header3 {constructor(data){this.data = data}}
 class Header4 {constructor(data){this.data = data}}
 class Header5 {constructor(data){this.data = data}}
 class Header6 {constructor(data){this.data = data}}
+class Bold {constructor(data){this.data = data}}
+class Italics {constructor(data){this.data = data}}
 class Hash {constructor(data){this.data = data}}
 class Underscore {constructor(data){this.data = data}}
 class Period {constructor(data){this.data = data}}
