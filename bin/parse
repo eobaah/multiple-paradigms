@@ -17,7 +17,7 @@ if (!fileName) {
 switch (args.paradigm) {
   case 'oo':
     var ooConverter = new mdHtmlConverter(fs.readFileSync(fileName, 'utf-8'))
-    console.log(ooConverter.tokenIdentifier())
+    console.log(ooConverter.parseInitiator())
     break
   case 'functional':
     console.log(parseFunctional(fs.readFileSync(fileName)))

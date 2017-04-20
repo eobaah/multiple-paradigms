@@ -11,6 +11,6 @@ describe('object-oriented parser', () => {
 
   it('can convert Headers', () => {
     // console.log(typeof data.data);
-    expect(myOOConvert.tokenIdentifier()).to.equal([])
+    expect(myOOConvert.parseInitiator()).to.equal([])
   })
 })

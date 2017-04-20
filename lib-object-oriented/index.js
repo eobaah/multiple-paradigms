@@ -30,54 +30,55 @@ class mdHtmlConverter {
         break
     }
   }
-  tokenIdentifier(){
-    let index = 0
+
+  parseInitiator(){
     this.data = this.data.split('').map((token) => {
       return this.assign(token)
     })
+    console.log(this.data.slice(150));
     return this.tokenBuilder(this.data)
   }
+
   tokenBuilder(input, position){
-    let index = position || 0, message = [], tagSymbol = [], counter = 0
+    let index = position || 0, message = [], tagIdentifier = [], counter = 0
     while(!(input[index] instanceof Character)){
       if(input[index] !== undefined){
-        tagSymbol.push(input[index].data)
+        tagIdentifier.push(input[index].data)
         index++
-      }else{
-        return this.elements
-      }
+      }else{ return this.elements }
     }
-    if(tagSymbol.includes('#')){
-      tagSymbol.pop()
-    }
+    if(tagIdentifier.includes('#')){ tagIdentifier.pop() }
     index--
-    if(tagSymbol.join('').includes('__')||tagSymbol.join('').includes('**')){
-      console.log('im a bold');
-    }
 
     while(input[index].data !== '\n'){
       message.push(input[index].data)
       index++
     }
+
     message.shift()
-    this.populateElement(tagSymbol.join(''),message.join(''))
+
+    if(tagIdentifier.join('').includes('**') || tagIdentifier.join('').includes('__')  || tagIdentifier.join('').includes('*') || tagIdentifier.join('').includes('_')){
+      this.checkBoldOrItalics(tagIdentifier, message)
+    }
+    this.populateElement(tagIdentifier.join(''),message.join(''))
     return this.resetIndex(index)
   }
-  indexIncrementor(num){
-    if(this.data[num] instanceof NewLine || this.data[num] instanceof Space){
-      // console.log('where am i???? ', this.data[num + 2], this.data.length);
-      return this.indexIncrementor(num + 1)
+
+  checkBoldOrItalics(tag, data){
+    let index = 0
+    while(index <= data.length){
+      if((data[index] === '*' && data[index + 1] === '*') || (data[index] === '_' && data[index + 1] === '_')){
+        data.pop()
+        data.pop()
+        return data
+      }else if(data[index] === '*' || data[index] === '_'){
+        data.pop()
+        return data
+      }
+      index++
     }
-    return num
   }
-  resetIndex(index){
-    let newIndex
-    if(index === this.data.length){
-      return this.elements
-    }
-    newIndex = this.indexIncrementor(index)
-    return this.tokenBuilder(this.data, newIndex)
-  }
+
   populateElement(input, message){
     switch(input){
       case '#': this.elements.push(new Header1(message)); break;
@@ -90,16 +91,24 @@ class mdHtmlConverter {
       case '*'||'_': this.elements.push(new Italics(message)); break;
     }
   }
+
+  resetIndex(index){
+    let newIndex
+    if(index === this.data.length){
+      return this.elements
+    }
+    newIndex = this.indexIncrementor(index)
+    return this.tokenBuilder(this.data, newIndex)
+  }
+
+  indexIncrementor(num){
+    if(this.data[num] instanceof NewLine || this.data[num] instanceof Space){
+      return this.indexIncrementor(num + 1)
+    }
+    return num
+  }
 }
 
-class Header1 {constructor(data){this.data = data}}
-class Header2 {constructor(data){this.data = data}}
-class Header3 {constructor(data){this.data = data}}
-class Header4 {constructor(data){this.data = data}}
-class Header5 {constructor(data){this.data = data}}
-class Header6 {constructor(data){this.data = data}}
-class Bold {constructor(data){this.data = data}}
-class Italics {constructor(data){this.data = data}}
 class Hash {constructor(data){this.data = data}}
 class Underscore {constructor(data){this.data = data}}
 class Period {constructor(data){this.data = data}}
@@ -117,8 +126,17 @@ class ForwardSlash {constructor(data){this.data = data}}
 class BackSlash {constructor(data){this.data = data}}
 class Asterisk {constructor(data){this.data = data}}
 class Bang {constructor(data){this.data = data}}
-class UrlLink {constructor(data){this.data = data}}
-class Image {constructor(data){this.data = data}}
 class Character {constructor(data){this.data = data}}
 class Number {constructor(data){this.data = data}}
+
+class Header1 {constructor(data){this.data = data}}
+class Header2 {constructor(data){this.data = data}}
+class Header3 {constructor(data){this.data = data}}
+class Header4 {constructor(data){this.data = data}}
+class Header5 {constructor(data){this.data = data}}
+class Header6 {constructor(data){this.data = data}}
+class Bold {constructor(data){this.data = data}}
+class Italics {constructor(data){this.data = data}}
+class UrlLink {constructor(data){this.data = data}}
+class Image {constructor(data){this.data = data}}
 module.exports = mdHtmlConverter
