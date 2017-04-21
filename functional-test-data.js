@@ -1,4 +1,6 @@
-  # Multiple Paradigms
+let data ={
+  sample:
+`# Multiple Paradigms
 
 # other words for this line
 **make me bold**
@@ -18,4 +20,7 @@ _make me italic too_
 ###### Okay one more
 
 ###### got a whole heap of information somewhere
-![Rick Rolling](img/rickastley.jpeg)
+![Rick Rolling](img/rickastley.jpeg)`
+}
+
+module.exports = data
