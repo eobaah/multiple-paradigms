@@ -46,7 +46,7 @@ context('addH5()', () => {
 })
 
 context('addBold()', () => {
-  it.only('Convert md addBold heading to HTML addBold tags.', () => {
+  it('Convert md addBold heading to HTML addBold tags.', () => {
 
     expect(addBold('__make me bold too__')).to.equal('<strong>make me bold too</strong>')
   })
