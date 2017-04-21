@@ -21,15 +21,15 @@ describe('object-oriented parser', () => {
       `)
     let result = myOOConvert.parseInitiator()
     expect(result).to.eql([
-      { data: 'Multiple Paradigms' },
-      { data: 'Challenge Rating' },
-      { data: 'Got a whole heap of information somewhere' },
-      { data: 'Another test' },
-      { data: 'Old transparency' },
-      { data: 'New transparency' },
-      { data: 'Other words for this line' },
-      { data: 'Last line for now' },
-      { data: 'Okay one more' }
+      "<h1>Multiple Paradigms</h1>",
+      "<h2>Challenge Rating</h2>",
+      "<h6>Got a whole heap of information somewhere</h6>",
+      "<h3>Another test</h3>",
+      "<h4>Old transparency</h4>",
+      "<h3>New transparency</h3>",
+      "<h1>Other words for this line</h1>",
+      "<h5>Last line for now</h5>",
+      "<h6>Okay one more</h6>"
     ])
   })
 })
