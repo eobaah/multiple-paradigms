@@ -1,9 +1,15 @@
 module.exports = function parseFunctional(fileArray) {
   var methods = [addH1, addH2, addH3, addH4, addH5, addH6, addBold, addItalics, addLinks, addImages, addListItem]
-  return methods.reduce(function(dataFile, method){
-    return method(dataFile)
-  }, fileArray)
-
+  var result = []
+  fileArray.map(function(line){
+    return methods.map(function(method){
+      if(method(line)[0] === '<'){
+        result.push(method(line))
+      }
+      return method(line)
+    })
+  })
+  return result.join('\n')
 }
 function addH1(input){
   return input.replace(/^\s*(?:\<h1\>)*(?:\#\s)(?!\#)(.*)/gm, '<h1>$1</h1>')
@@ -38,6 +44,3 @@ function addImages(input){
 function addListItem(input){
   return input.replace(/(?:(\- )(.*))/gm, '<li>$2</li>')
 }
-// function addUnorderedList(input){
-//   return input.replace(//gm, '<ul>$&</ul>')
-// }
