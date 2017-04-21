@@ -1,21 +1,19 @@
-  # Multiple Paradigms
-
-# other words for this line
-**make me bold**
-
+# Multiple Paradigms
 ## Challenge Rating
-__make me bold too__
-### New transparency
-[Multiple Paradigms](http://jsdev.learnersguild.org/goals/124)
-### another test
-*make me italic*
+  ##ihaveaparagraphhere
+###### Got a whole heap of information somewhere
+### Another test
 #### Old transparency
-_make me italic too_
-##### last line for now
-- list item
-- list item
-- list item
+### New transparency
+# Other words for this line
+##### Last line for now
 ###### Okay one more
-
-###### got a whole heap of information somewhere
+**make me bold**
+__make me bold too__
+*make me italic*
+_make me italic too_
+- list item
+- list item
+- list item
+[Multiple Paradigms](http://jsdev.learnersguild.org/goals/124)
 ![Rick Rolling](img/rickastley.jpeg)
