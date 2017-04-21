@@ -1,5 +1,6 @@
 # Multiple Paradigms
 ## Challenge Rating
+  ##ihaveaparagraphhere
 ###### Got a whole heap of information somewhere
 ### Another test
 #### Old transparency

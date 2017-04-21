@@ -1,16 +1,35 @@
 import chai,{ expect } from 'chai'
 import mtHtmlConverter from '../lib-object-oriented/index'
-import data from '../for_test'
 
 describe('object-oriented parser', () => {
-  let myOOConvert = new mtHtmlConverter(data.data)
 
   it('is a function', () => {
     expect(mtHtmlConverter).to.be.a('function')
   })
 
   it('can convert Headers', () => {
-    // console.log(typeof data.data);
-    expect(myOOConvert.parseInitiator()).to.equal([])
+    let myOOConvert = new mtHtmlConverter(
+      `# Multiple Paradigms
+      ## Challenge Rating
+      ###### Got a whole heap of information somewhere
+      ### Another test
+      #### Old transparency
+      ### New transparency
+      # Other words for this line
+      ##### Last line for now
+      ###### Okay one more
+      `)
+    let result = myOOConvert.parseInitiator()
+    expect(result).to.eql([
+      { data: 'Multiple Paradigms' },
+      { data: 'Challenge Rating' },
+      { data: 'Got a whole heap of information somewhere' },
+      { data: 'Another test' },
+      { data: 'Old transparency' },
+      { data: 'New transparency' },
+      { data: 'Other words for this line' },
+      { data: 'Last line for now' },
+      { data: 'Okay one more' }
+    ])
   })
 })

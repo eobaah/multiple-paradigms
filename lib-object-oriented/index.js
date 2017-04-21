@@ -1,32 +1,34 @@
+let CHARACTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+let NUMBERS = '1234567890'
+
 class mdHtmlConverter {
   constructor(data){
     this.data = data
     this.elements = []
   }
-  assign(input){
-    let CHARACTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    let NUMBERS = '1234567890'
-    switch(input){
-      case '#': return new Hash(input); break;
-      case '_': return new Underscore(input); break;
-      case '.': return new Period(input); break;
-      case '-': return new Hyphen(input); break;
-      case ' ': return new Space(input); break;
-      case '(': return new OpenParen(input); break;
-      case ')': return new CloseParen(input); break;
-      case '\n': return new NewLine(input); break;
-      case '{': return new OpenCurly(input); break;
-      case '}': return new CloseCurly(input); break;
-      case '[': return new OpenSquare(input); break;
-      case ']': return new CloseSquare(input); break;
-      case ':': return new Colon(input); break;
-      case '/': return new ForwardSlash(input); break;
-      case '\\': return new BackSlash(input); break;
-      case '*': return new Asterisk(input); break;
-      case '!': return new Bang(input); break;
+
+  assign(char){
+    switch(char){
+      case '#': return new Hash(char); break;
+      case '_': return new Underscore(char); break;
+      case '.': return new Period(char); break;
+      case '-': return new Hyphen(char); break;
+      case ' ': return new Space(char); break;
+      case '(': return new OpenParen(char); break;
+      case ')': return new CloseParen(char); break;
+      case '\n': return new NewLine(char); break;
+      case '{': return new OpenCurly(char); break;
+      case '}': return new CloseCurly(char); break;
+      case '[': return new OpenSquare(char); break;
+      case ']': return new CloseSquare(char); break;
+      case ':': return new Colon(char); break;
+      case '/': return new ForwardSlash(char); break;
+      case '\\': return new BackSlash(char); break;
+      case '*': return new Asterisk(char); break;
+      case '!': return new Bang(char); break;
       default:
-        if(CHARACTERS.indexOf(input)){ return new Character(input) }
-        else if(NUMBERS.indexOf(input)){ return new Number(input) }
+        if(CHARACTERS.includes(char)){ return new Character(char) }
+        else if(NUMBERS.includes(char)){ return new Number(char) }
         break
     }
   }
@@ -35,33 +37,13 @@ class mdHtmlConverter {
     this.data = this.data.split('').map((token) => {
       return this.assign(token)
     })
-    console.log(this.data.slice(150));
-    return this.tokenBuilder(this.data)
+    return this.tokenBuilder(this.data, 0)
   }
 
-  tokenBuilder(input, position){
-    let index = position || 0, message = [], tagIdentifier = [], counter = 0
-    while(!(input[index] instanceof Character)){
-      if(input[index] !== undefined){
-        tagIdentifier.push(input[index].data)
-        index++
-      }else{ return this.elements }
+  stripExtraSpace(message) {
+    if(message[0] === ' '){
+      message.shift()
     }
-    if(tagIdentifier.includes('#')){ tagIdentifier.pop() }
-    index--
-
-    while(input[index].data !== '\n'){
-      message.push(input[index].data)
-      index++
-    }
-
-    message.shift()
-
-    if(tagIdentifier.join('').includes('**') || tagIdentifier.join('').includes('__')  || tagIdentifier.join('').includes('*') || tagIdentifier.join('').includes('_')){
-      this.checkBoldOrItalics(tagIdentifier, message)
-    }
-    this.populateElement(tagIdentifier.join(''),message.join(''))
-    return this.resetIndex(index)
   }
 
   checkBoldOrItalics(tag, data){
@@ -78,28 +60,84 @@ class mdHtmlConverter {
       index++
     }
   }
+  tokenBuilder(input, position){
+    let index = position || 0, message = [], tagIdentifier = [], counter = 0
+    while(!(input[index] instanceof Character)){
+      if(input[index] !== undefined){
+        tagIdentifier.push(input[index].data)
+        index++
+      }else{ return this.elements }
+    }
+    this.verifyTag(tagIdentifier)
+    if(tagIdentifier.includes('#')){ tagIdentifier.pop() }
+    index--
 
+    while(input[index] && input[index].data !== '\n'){
+      message.push(input[index].data)
+      index++
+    }
+
+    this.stripExtraSpace(message)
+    if(tagIdentifier.join('').includes('**') || tagIdentifier.join('').includes('__')  || tagIdentifier.join('').includes('*') || tagIdentifier.join('').includes('_')){
+      this.checkBoldOrItalics(tagIdentifier, message)
+    }
+    this.populateElement(tagIdentifier.join(''),message.join(''))
+    return this.resetIndex(index)
+  }
   populateElement(input, message){
     switch(input){
-      case '#': this.elements.push(new Header1(message)); break;
-      case '##': this.elements.push(new Header2(message)); break;
-      case '###': this.elements.push(new Header3(message)); break;
-      case '####': this.elements.push(new Header4(message)); break;
-      case '#####': this.elements.push(new Header5(message)); break;
-      case '######': this.elements.push(new Header6(message)); break;
-      case '**'||'__': this.elements.push(new Bold(message)); break;
-      case '*'||'_': this.elements.push(new Italics(message)); break;
+      case '#': this.elements.push(`<h1>${message}</h1>`); break;
+      case '##': this.elements.push(`<h2>${message}</h2>`); break;
+      case '###': this.elements.push(`<h3>${message}</h3>`); break;
+      case '####': this.elements.push(`<h4>${message}</h4>`); break;
+      case '#####': this.elements.push(`<h5>${message}</h5>`); break;
+      case '######': this.elements.push(`<h6>${message}</h6>`); break;
+      case '**'||'__': this.elements.push(`<strong>${message}</strong>`); break;
+      case '*'||'_': this.elements.push(`<i>${message}</i>`); break;
+      default: this.elements.push(`<p>${message}</p>`); break;
     }
   }
 
-  resetIndex(index){
-    let newIndex
-    if(index === this.data.length){
-      return this.elements
+  checkTag(input){
+    switch(input){
+      case '#' || ' #' || '  #' || '   #': return true;
+      case '##' || ' ##' || '  ##' || '   ##': return true;
+      case '###' || ' ###' || '  ###' || '   ###': return true;
+      case '####' || ' ####' || '  ####' || '   ####': return true;
+      case '#####' || ' #####' || '  #####' || '   #####': return true;
+      case '######' || ' ######' || '  ######' || '   ######': return true;
+      case '**'||'__': return true;
+      case '*'||'_': return true;
+      default: return false
     }
-    newIndex = this.indexIncrementor(index)
-    return this.tokenBuilder(this.data, newIndex)
   }
+  verifyTag(input){
+    let count = 0, index = 0, result = {}
+    //checking the tag if it is syntactically accurate
+    if(!this.checkTag(input)){
+      while (input[index] instanceof Space){
+        //loop through input
+        //count number of spaces before symbol
+        if(input[index] instanceof Space){ count++ }
+        //if more than accepted spaces are found it changes to pre code tags
+        if(count > 3){
+          result.flag = 'pre-code'
+          result.data = input
+        }
+        index++
+      }
+      if(count < 4 && input[input.length - 1] !== ' '){
+        result.flag = 'para'
+        result.data = input
+      }
+
+    }else{
+      return input }
+    //if it fits criteria it continues though function
+    return result
+    //if does not correlate to an existing tag it changes into a p tag
+  }
+
 
   indexIncrementor(num){
     if(this.data[num] instanceof NewLine || this.data[num] instanceof Space){
@@ -107,36 +145,47 @@ class mdHtmlConverter {
     }
     return num
   }
+  resetIndex(index){
+    let newIndex
+    if(index === this.data.length){
+      return this.elements
+    }
+    newIndex = this.indexIncrementor(index)
+
+    return this.tokenBuilder(this.data, newIndex)
+  }
 }
 
-class Hash {constructor(data){this.data = data}}
-class Underscore {constructor(data){this.data = data}}
-class Period {constructor(data){this.data = data}}
-class Hyphen {constructor(data){this.data = data}}
-class Space {constructor(data){this.data = data}}
-class OpenParen {constructor(data){this.data = data}}
-class CloseParen {constructor(data){this.data = data}}
-class NewLine {constructor(data){this.data = data}}
-class OpenCurly {constructor(data){this.data = data}}
-class CloseCurly {constructor(data){this.data = data}}
-class OpenSquare {constructor(data){this.data = data}}
-class CloseSquare {constructor(data){this.data = data}}
-class Colon {constructor(data){this.data = data}}
-class ForwardSlash {constructor(data){this.data = data}}
-class BackSlash {constructor(data){this.data = data}}
-class Asterisk {constructor(data){this.data = data}}
-class Bang {constructor(data){this.data = data}}
-class Character {constructor(data){this.data = data}}
-class Number {constructor(data){this.data = data}}
+class Token {constructor(data) {this.data = data}}
+class Hash extends Token {}
+class Underscore extends Token {}
+class Period extends Token {}
+class Hyphen extends Token {}
+class Space extends Token {}
+class OpenParen extends Token {}
+class CloseParen extends Token {}
+class NewLine extends Token {}
+class OpenCurly extends Token {}
+class CloseCurly extends Token {}
+class OpenSquare extends Token {}
+class CloseSquare extends Token {}
+class Colon extends Token {}
+class ForwardSlash extends Token {}
+class BackSlash extends Token {}
+class Asterisk extends Token {}
+class Bang extends Token {}
+class Character extends Token {}
+class Number extends Token {}
 
-class Header1 {constructor(data){this.data = data}}
-class Header2 {constructor(data){this.data = data}}
-class Header3 {constructor(data){this.data = data}}
-class Header4 {constructor(data){this.data = data}}
-class Header5 {constructor(data){this.data = data}}
-class Header6 {constructor(data){this.data = data}}
-class Bold {constructor(data){this.data = data}}
-class Italics {constructor(data){this.data = data}}
-class UrlLink {constructor(data){this.data = data}}
-class Image {constructor(data){this.data = data}}
+class Header1 extends Token {}
+class Header2 extends Token {}
+class Header3 extends Token {}
+class Header4 extends Token {}
+class Header5 extends Token {}
+class Header6 extends Token {}
+class Paragraph extends Token {}
+class Bold extends Token {}
+class Italics extends Token {}
+class UrlLink extends Token {}
+class Image extends Token {}
 module.exports = mdHtmlConverter
